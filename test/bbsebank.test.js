@@ -75,6 +75,7 @@ contract("BBSEBank", (accounts) => {
       expect(Number(await web3.eth.getBalance(bbseBank.address))).to.be.above(
         0
       ); // Use web3 to find the Ether balance of any account
+      expect(Number(await bbseBank.totalDepositAmount())).to.be.above(0);
     });
 
     it("should withdraw correctly", async () => {
@@ -100,6 +101,7 @@ contract("BBSEBank", (accounts) => {
         Number(await web3.eth.getBalance(bbseBank.address)),
         10 ** 18
       );
+      assert.equal(Number(await bbseBank.totalDepositAmount()), 10 ** 18);
     });
 
     it("should borrow correctly", async () => {
@@ -127,7 +129,7 @@ contract("BBSEBank", (accounts) => {
       });
 
       const borrower = await bbseBank.borrowers(accounts[1]);
-      assert.equal(borrower.hasActiveBorrow, true);
+      assert.equal(borrower.hasActiveLoan, true);
       assert.equal(Number(borrower.amount), web3.utils.toWei("0.001", "ether"));
       assert.equal(
         Number(borrower.collateral),
@@ -188,7 +190,7 @@ contract("BBSEBank", (accounts) => {
       });
 
       const borrower = await bbseBank.borrowers(accounts[1]);
-      assert.equal(borrower.hasActiveBorrow, false);
+      assert.equal(borrower.hasActiveLoan, false);
       assert.equal(Number(borrower.amount), 0);
       assert.equal(Number(borrower.collateral), 0);
 

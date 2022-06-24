@@ -44,6 +44,7 @@ oracleContract?.events
   })
   .on("data", async () => {
     const res = await getLatestPrice();
+    console.log(res);
     // Calls updateRate method on the oracle contract
     await oracleContract.methods
       .updateRate(

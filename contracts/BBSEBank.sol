@@ -58,13 +58,21 @@ contract BBSEBank is Ownable{
 
    // Represents a borrower record
   struct Borrower {
-    bool hasActiveBorrow;
+    bool hasActiveLoan;
     uint amount;
     uint collateral;
   }
 
   // Address to borrower mapping
   mapping (address => Borrower) public borrowers;
+
+ /**
+  * @dev Checks whether the yearlyReturnRate value is between 1 and 100
+  */
+  modifier validRate (uint _rate) {
+    require(_rate > 0 && _rate <= 100, "Yearly return rate must be between 1 and 100");
+    _;
+  }
 
   /**
   * @dev Initializes the bbseTokenContract with the provided contract address.
@@ -76,10 +84,9 @@ contract BBSEBank is Ownable{
   * @param _yearlyReturnRate yearly return rate of the bank
   * @param _oracleContract address of the deployed ETHBBSEPriceFeedOracle contract
   */
-  constructor (address _bbseTokenContract, uint32 _yearlyReturnRate, address _oracleContract) public {
+  constructor (address _bbseTokenContract, uint32 _yearlyReturnRate, address _oracleContract) public validRate(_yearlyReturnRate) {
     bbseTokenContract = BBSEToken(_bbseTokenContract);
     oracleContract = ETHBBSEPriceFeedOracle(_oracleContract);
-    require(_yearlyReturnRate > 0 && _yearlyReturnRate <= 100, "Yearly return rate must be between 1 and 100");
     yearlyReturnRate = _yearlyReturnRate;
     // Calculate interest per second for min deposit (1 Ether)
     interestPerSecondForMinDeposit = ((MIN_DEPOSIT_AMOUNT * yearlyReturnRate) / 100) / YEAR_SECONDS;
@@ -152,7 +159,7 @@ contract BBSEBank is Ownable{
   * @param amount the amount of ETH loan request (expressed in Wei)
   */
   function borrow(uint amount) public{
-    require (borrowers[msg.sender].hasActiveBorrow != true, "Account can't have multiple active loans");
+    require (borrowers[msg.sender].hasActiveLoan != true, "Account can't have multiple active loans");
     require ((amount + totalDepositAmount) <= address(this).balance, "The bank can't lend this amount right now");
 
     // Get the latest price feed rate for ETH/BBSE from the price feed oracle
@@ -168,7 +175,7 @@ contract BBSEBank is Ownable{
 
     payable(msg.sender).transfer(amount);
 
-    borrowers[msg.sender].hasActiveBorrow = true;
+    borrowers[msg.sender].hasActiveLoan = true;
     borrowers[msg.sender].amount = amount;
     borrowers[msg.sender].collateral = collateral;
   }
@@ -180,14 +187,14 @@ contract BBSEBank is Ownable{
   * Borrower must send the exact ETH amount borrowed.
   */  
   function payLoan() public payable {
-    require (borrowers[msg.sender].hasActiveBorrow == true, "Account must have an active loan to pay back");
+    require (borrowers[msg.sender].hasActiveLoan == true, "Account must have an active loan to pay back");
     require(msg.value == borrowers[msg.sender].amount, "The paid amount must match the borrowed amount");
 
     uint fee =  (borrowers[msg.sender].collateral * LOAN_FEE_RATE) / 100;
 
     bbseTokenContract.transfer(msg.sender, borrowers[msg.sender].collateral - fee);
 
-    borrowers[msg.sender].hasActiveBorrow = false;
+    borrowers[msg.sender].hasActiveLoan = false;
     borrowers[msg.sender].amount = 0;
     borrowers[msg.sender].collateral = 0;
   }

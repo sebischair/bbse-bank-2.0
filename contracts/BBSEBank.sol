@@ -147,13 +147,12 @@ contract BBSEBank is Ownable{
   * Only callable by the owner of the BBSEBank contract.
   * @param _yearlyReturnRate new yearly return rate
   */
-  function updateYearlyReturnRate(uint32 _yearlyReturnRate) public onlyOwner{
-    require(_yearlyReturnRate > 0 && _yearlyReturnRate <= 100, "Yearly return rate must be between 1 and 100");
+  function updateYearlyReturnRate(uint32 _yearlyReturnRate) public onlyOwner validRate (_yearlyReturnRate){
     yearlyReturnRate = _yearlyReturnRate;
   }
 
   /**
-  * @dev Collaterize BBSE Token to borrow ETH.
+  * @dev Collateralize BBSE Token to borrow ETH.
   * A borrower can't have more than one active loan.
   * ETH amount to be borrowed + totalDepositAmount, must be existing in the contract balance.
   * @param amount the amount of ETH loan request (expressed in Wei)

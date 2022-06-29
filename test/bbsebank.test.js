@@ -120,7 +120,7 @@ contract("BBSEBank", (accounts) => {
         await bbseToken.balanceOf(bbseBank.address)
       );
 
-      // Borrows 0.0001 Ether while collateralizing (0.001 * colleteralization ratio * rate) BBSE tokens == 0.0255 BBSE tokens
+      // Borrows 0.001 Ether while collateralizing (0.001 * colleteralization ratio * rate) BBSE tokens == 0.0255 BBSE tokens
       // Remember that ERC20 tokens also have 18 decimals. Thus, 0.0255 BBSE tokens == 0.0255 * 10**18 units
       // Note: We have allowed for BBSEBank to transfer 0.05 BBSE tokens from borrower to itself,
       // while the collateral value is 0.0255 BBSE tokens. Normally, you should only allow the required amount.

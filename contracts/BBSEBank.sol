@@ -128,7 +128,7 @@ contract BBSEBank is Ownable{
     totalDepositAmount -= depositedAmount;
 
     // Calculate interest per second
-    uint interestPerSecond = interestPerSecondForMinDeposit * (depositedAmount / MIN_DEPOSIT_AMOUNT);
+    uint interestPerSecond = (interestPerSecondForMinDeposit * depositedAmount) / MIN_DEPOSIT_AMOUNT;
     uint interest = interestPerSecond * depositDuration;
 
     // Send back deposited Ether to investor
@@ -164,7 +164,7 @@ contract BBSEBank is Ownable{
     // Get the latest price feed rate for ETH/BBSE from the price feed oracle
     uint priceFeedRate = oracleContract.getRate();
 
-    uint collateral = ((amount * COLLATERALIZATION_RATIO) / 100) * priceFeedRate;
+    uint collateral = (amount * COLLATERALIZATION_RATIO * priceFeedRate ) / 100;
 
     /* Try to transfer BBSE tokens from msg.sender to BBSEBank
     *  msg.sender must set an allowance to BBSEBank first, since BBSEBank

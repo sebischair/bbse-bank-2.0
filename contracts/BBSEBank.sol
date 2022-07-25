@@ -131,15 +131,15 @@ contract BBSEBank is Ownable{
     uint interestPerSecond = (interestPerSecondForMinDeposit * depositedAmount) / MIN_DEPOSIT_AMOUNT;
     uint interest = interestPerSecond * depositDuration;
 
-    // Send back deposited Ether to investor
-    payable(msg.sender).transfer(depositedAmount);
-    // Mint BBSE Tokens to investor, to pay out the interest
-    bbseTokenContract.mint(msg.sender, interest);
-
     // Reset the investor object
     investor.amount = 0;
     investor.hasActiveDeposit = false;
     investor.startTime = 0;
+
+    // Send back deposited Ether to investor
+    payable(msg.sender).transfer(depositedAmount);
+    // Mint BBSE Tokens to investor, to pay out the interest
+    bbseTokenContract.mint(msg.sender, interest);
   }
 
   /**
@@ -172,11 +172,11 @@ contract BBSEBank is Ownable{
     */
     require(bbseTokenContract.transferFrom(msg.sender, address(this), collateral), "BBSEBank can't receive your tokens");
 
-    payable(msg.sender).transfer(amount);
-
     borrowers[msg.sender].hasActiveLoan = true;
     borrowers[msg.sender].amount = amount;
     borrowers[msg.sender].collateral = collateral;
+
+    payable(msg.sender).transfer(amount);
   }
 
   /** 

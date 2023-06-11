@@ -14,7 +14,10 @@ contract("ETHBBSEPriceFeedOracle", (accounts) => {
   // Success scenarios
   describe("success", () => {
     it("should initalize the lastUpdateBlock and rate correctly", async () => {
-      assert.equal(await oracle.getRate.call(), 0);
+      // Here we use call() as invoking getRate normally requires a transaction
+      // With call(), we can access the return value without changing the state
+      const rate = await oracle.getRate.call();
+      assert.equal(rate, 0);
       const block = await web3.eth.getBlock("latest");
       assert.equal(await oracle.lastUpdateBlock(), block.number);
     });

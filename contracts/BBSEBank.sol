@@ -24,7 +24,7 @@ contract BBSEBank is Ownable{
   // Minimum deposit amount (1 Ether, expressed in Wei)
   uint public constant MIN_DEPOSIT_AMOUNT = 10**18;
 
-  /* Min. Collateral value / Loan value
+  /* Min. Ratio (Collateral value / Loan value)
    * Example: To take a 1 ETH loan,
    * an asset worth of at least 1.5 ETH must be collateralized.
   */

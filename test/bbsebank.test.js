@@ -39,7 +39,7 @@ contract("BBSEBank", (accounts) => {
     // Update the ETHBBSEPriceFeedOracle rate (normally done by the oracle server)
     // Since we are using AAVE (instead of BBSE as ETH/BBSE doesn't exists),
     // let's use an approximate rate for ETH/AAVE as our rate
-    await oracle.updateRate(17, { from: accounts[0] });
+    await oracle.updateRate(33, { from: accounts[0] });
   };
 
   // Success scenarios
@@ -120,10 +120,10 @@ contract("BBSEBank", (accounts) => {
         await bbseToken.balanceOf(bbseBank.address)
       );
 
-      // Borrows 0.001 Ether while collateralizing (0.001 * colleteralization ratio * rate) BBSE tokens == 0.0255 BBSE tokens
-      // Remember that ERC20 tokens also have 18 decimals. Thus, 0.0255 BBSE tokens == 0.0255 * 10**18 units
+      // Borrows 0.001 Ether while collateralizing (0.001 * colleteralization_ratio * rate) BBSE tokens == 0.0495 BBSE tokens
+      // Remember that ERC20 tokens also have 18 decimals. Thus, 0.0495 BBSE tokens == 0.0495 * 10**18 units
       // Note: We have allowed for BBSEBank to transfer 0.05 BBSE tokens from borrower to itself,
-      // while the collateral value is 0.0255 BBSE tokens. Normally, you should only allow the required amount.
+      // while the collateral value is 0.0495 BBSE tokens. Ideally, you should only allow the required amount.
       await bbseBank.borrow(web3.utils.toWei("0.001", "ether"), {
         from: accounts[1], // Borrower = accounts[1]
       });
@@ -133,7 +133,7 @@ contract("BBSEBank", (accounts) => {
       assert.equal(Number(borrower.amount), web3.utils.toWei("0.001", "ether"));
       assert.equal(
         Number(borrower.collateral),
-        ((web3.utils.toWei("0.001", "ether") * 150) / 100) * 17
+        ((web3.utils.toWei("0.001", "ether") * 150) / 100) * 33
       );
 
       // Checks if borrower has more ETH than before and less BBSE tokens
@@ -369,7 +369,7 @@ contract("BBSEBank", (accounts) => {
       assert.equal(err.reason, "Account can't have multiple active loans"); // Use this error message in your borrow function
     });
 
-    it("should reject pay loan with no active laon", async () => {
+    it("should reject pay loan with no active loan", async () => {
       let err;
       try {
         bbseToken = await BBSEToken.new();

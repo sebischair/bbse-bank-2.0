@@ -13,7 +13,7 @@ contract ETHBBSEPriceFeedOracle is Ownable {
   // Block number of the last rate update.
   uint public lastUpdateBlock;
 
-  // An event that indicates the price of the priceFeed should be updated
+  // An event that indicates the price should be emitted
   // Must be listened by the oracle server
   event GetNewRate (string priceFeed);
   

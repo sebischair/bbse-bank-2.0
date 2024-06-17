@@ -18,7 +18,7 @@ contract BBSEBank is Ownable{
   // Seconds in a year
   uint32 public constant YEAR_SECONDS = 31536000; 
 
-  // Average block time (set to a large number in order to increase the paid interest i.e., BBSE tokens)
+  // Average block time (set to a large number in order to increase the paid interest in BBSE tokens)
   uint32 public constant AVG_BLOCK_TIME = 10000000;
   
   // Minimum deposit amount (1 Ether, expressed in Wei)
@@ -40,7 +40,7 @@ contract BBSEBank is Ownable{
   uint public interestPerSecondForMinDeposit;
 
   /* The value of the total deposited ETH.
-   * BBSEBank shouldn't be giving loans where requested amount + totalDepositAmount > contract's ETH balance.
+   * BBSEBank shouldn't be giving loans when requested amount + totalDepositAmount > contract's ETH balance.
    * E.g., if all depositors want to withdraw while no borrowers paid their loan back, then the bank contract
    * should still be able to pay.
   */
@@ -93,7 +93,7 @@ contract BBSEBank is Ownable{
   }
 
   /**
-  * @dev Initializes the respective investor object in investors mapping for the caller of the function.
+  * @dev Initializes the respective investor object in investors mapping to the caller of the function.
   * Sets the amount to message value and starts the deposit time (hint: use block number as the start time).
   * Minimum deposit amount is 1 Ether (be careful about decimals!)
   * Investor can't have an already active deposit.
